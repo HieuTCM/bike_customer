@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "665971199801",
+    "firebase_url": "https://bikeke-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "bikeke",
+    "storage_bucket": "bikeke.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:665971199801:android:2a900adcd16c42d7ed22e8",
+        "android_client_info": {
+          "package_name": "com.example.bike_customerv2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "665971199801-pdb3ns8s0cm4m9o7eqr2rivv25e9nnnn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.bike_customerv2",
+            "certificate_hash": "6d5b565885d21e4ae0f05156271938bcc7c37ddc"
+          }
+        },
+        {
+          "client_id": "665971199801-13uvkskt1dvub8vqopi2rdrq49b7ima9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfZa_BrdCgarUSzjK51l13wE2VuDs3yF4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "665971199801-13uvkskt1dvub8vqopi2rdrq49b7ima9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
