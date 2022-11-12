@@ -30,6 +30,25 @@ class customerProvider {
     'Accept': 'application/json',
     "Authorization": 'Bearer $token'
   };
+// get token
+  static Future<TokenAuthenticate> fetchTokenAuthenticate(
+      String idToken) async {
+    TokenAuthenticate tokenAuthenticate = new TokenAuthenticate();
+    var data = json.encode(idToken);
+    try {
+      final response = await http
+          .post(Uri.parse('$_mainUrl' + '$_Authenticate'), body: data);
+      if (response.statusCode == 200) {
+        tokenAuthenticate =
+            TokenAuthenticate.fromJson(json.decode(response.body));
+      } else {
+        throw Exception('Error ${response.statusCode}');
+      }
+    } on HttpException catch (message) {
+      print(message.toString());
+    }
+    return tokenAuthenticate;
+  }
 
   static Future<Customer> fetchCustomerByEmail(String email) async {
     Customer customer = new Customer();
