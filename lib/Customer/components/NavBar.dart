@@ -1,3 +1,4 @@
+import 'package:bike_customerv2/Customer/screen/booking/historyScreen.dart';
 import 'package:bike_customerv2/Customer/screen/mainScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -29,8 +30,11 @@ class NavBar extends StatelessWidget {
           Expanded(
             child: IconButton(
               icon: Icon(Icons.access_time),
-              tooltip: 'Recent Booking',
-              onPressed: () {},
+              tooltip: 'History Booking',
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => historyScreen()));
+              },
             ),
           ),
           Expanded(

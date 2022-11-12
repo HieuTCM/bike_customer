@@ -3,9 +3,15 @@
 /// Enjoy coding ☕
 
 import 'dart:io';
+import 'dart:math';
 
+import 'package:bike_customerv2/Customer/models/tokenAuthenticate.dart';
+import 'package:bike_customerv2/Customer/provider/customer_provider.dart';
+import 'package:bike_customerv2/Customer/screen/mainScreen.dart';
+import 'package:bike_customerv2/Customer/screen/user/editProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:google_one_tap_sign_in/google_one_tap_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const LoginPage());
@@ -24,11 +30,29 @@ class _LoginPageState extends State<LoginPage> {
       "665971199801-13uvkskt1dvub8vqopi2rdrq49b7ima9.apps.googleusercontent.com";
 
   File? _image;
+  var isUpdated = false;
 
   @override
   void initState() {
     super.initState();
     print("INIT STATE");
+  }
+
+  void fetchTokenAuthenticated(String idToken) async {
+    TokenAuthenticate tokenAuthenticate = new TokenAuthenticate();
+    //tokenAuthenticate = await customerProvider.fetchTokenAuthenticate(idToken)
+    //as TokenAuthenticate;
+    final prefs = await SharedPreferences.getInstance();
+    //await prefs.setString('Token', tokenAuthenticate.accessToken);
+    await prefs.setString('Token',
+        'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhc3RlcmNvdWdhckBnbWFpbC5jb20iLCJpYXQiOjE2NjgyOTk3ODQsImV4cCI6MTY2ODI5OTc4NH0.9rp6ZDiJCwy9N8g4YUWFfRTFRGoLzQhdHbuWVbua1g0');
+
+    //await prefs.setString('UserID', tokenAuthenticate.userId);
+    await prefs.setInt('UserID', 18);
+
+    setState(() {
+      isUpdated = tokenAuthenticate.profileUpdated ?? false;
+    });
   }
 
   void _onSignIn() async {
@@ -38,7 +62,17 @@ class _LoginPageState extends State<LoginPage> {
       /// Whatever you do with [SignInResult] data
       print("Id Token : ${data.idToken ?? "-"}");
       print("ID : ${data.id ?? "-"}");
+      String token = data.idToken;
+      String idtoken = "";
+      while (token.length > 0) {
+        int initLength = (token.length >= 500 ? 500 : token.length);
+        idtoken = idtoken + token.substring(0, initLength);
+        int endLength = token.length;
+        token = token.substring(initLength, endLength);
+      }
     }
+
+    fetchTokenAuthenticated('token');
   }
 
   void _onSignInWithHandle() async {
@@ -80,7 +114,14 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               TextButton(
                 child: const Text("Sign In"),
-                onPressed: () => _onSignIn(),
+                onPressed: () {
+                  _onSignIn();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              isUpdated ? mainScreen() : editProfile()));
+                },
               ),
               TextButton(
                 child: const Text("Sign In With Handle"),
