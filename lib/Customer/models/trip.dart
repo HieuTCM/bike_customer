@@ -1,4 +1,7 @@
+import 'package:bike_customerv2/Customer/models/route.dart';
+import 'package:bike_customerv2/Customer/models/slot.dart';
 import 'package:bike_customerv2/Customer/models/station.dart';
+import 'package:bike_customerv2/Customer/models/user.dart';
 import 'package:provider/provider.dart';
 
 class CustomerTrip {
@@ -45,8 +48,8 @@ class CustomerTrip {
 class CustomerTripFull {
   late final id;
   late final customerId;
-  late final routeId;
-  late final slotId;
+  late Routes route;
+  late Slot slot;
   late final pickupStationId;
   late Station pickupStation;
   late final headtoStationId;
@@ -59,8 +62,8 @@ class CustomerTripFull {
   CustomerTripFull(
       {this.id,
       this.customerId,
-      this.routeId,
-      this.slotId,
+      required this.route,
+      required this.slot,
       this.pickupStationId,
       required this.pickupStation,
       this.headtoStationId,
@@ -110,4 +113,21 @@ class Trip {
       this.slotName,
       this.slot,
       this.timeStart);
+}
+
+class FinishedTrip {
+  late final id;
+  late CustomerTripFull cusTrip;
+  late Driver driver;
+  late final amount;
+  late final createdDate;
+  late final status;
+
+  FinishedTrip(
+      {this.id,
+      required this.cusTrip,
+      required this.driver,
+      this.amount,
+      this.createdDate,
+      this.status});
 }

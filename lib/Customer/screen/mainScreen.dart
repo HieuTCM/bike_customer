@@ -2,8 +2,9 @@
 
 import 'package:bike_customerv2/Customer/assets/data.dart';
 import 'package:bike_customerv2/Customer/components/NavBar.dart';
-import 'package:bike_customerv2/Customer/components/bookingTab.dart';
-import 'package:bike_customerv2/Customer/components/bookinginfomation.dart';
+import 'package:bike_customerv2/Customer/components/booking/bookingFinishedInfor.dart';
+import 'package:bike_customerv2/Customer/components/booking/bookingCard.dart';
+import 'package:bike_customerv2/Customer/components/booking/bookinginfomation.dart';
 import 'package:bike_customerv2/Customer/helper/shared_prefs.dart';
 import 'package:bike_customerv2/Customer/models/trip.dart';
 import 'package:bike_customerv2/Customer/models/user.dart';
@@ -24,12 +25,31 @@ class mainScreen extends StatefulWidget {
 class _mainScreenState extends State<mainScreen> {
   static int id = getCuctomerIDFromSharedPrefs();
   Future<Customer>? customer;
-  Future<List<CustomerTripFull>>? listTrip;
+  List<CustomerTripFull>? listTrip;
+  Future<List<FinishedTrip>>? listFinisgTrip;
+
+  fetchTrip(FinishedTrip tripfinished) {
+    CustomerTripFull trip = new CustomerTripFull(
+        id: tripfinished.cusTrip.id,
+        slot: tripfinished.cusTrip.slot,
+        route: tripfinished.cusTrip.route,
+        pickupStation: tripfinished.cusTrip.pickupStation,
+        headtoStation: tripfinished.cusTrip.headtoStation,
+        headtoStationId: tripfinished.cusTrip.headtoStation.id,
+        pickupStationId: tripfinished.cusTrip.pickupStation.id,
+        customerId: tripfinished.cusTrip.customerId,
+        pickupTime: tripfinished.cusTrip.pickupTime,
+        amount: tripfinished.cusTrip.amount,
+        createDate: tripfinished.createdDate,
+        status: tripfinished.status);
+    listTrip?.add(trip);
+  }
+
   @override
   void initState() {
     super.initState();
     customer = customerProvider.fetchCustomerByID(id);
-    listTrip = customerProvider.fetchCustomertripByID(id);
+    listFinisgTrip = customerProvider.fetchTripByID(id);
   }
 
   @override
@@ -173,100 +193,96 @@ class _mainScreenState extends State<mainScreen> {
                             alignment: Alignment.centerLeft,
                             child: Text("Recent Booking :",
                                 style: TextStyle(fontSize: 24)))),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    FutureBuilder<List<CustomerTripFull>>(
-                        future: listTrip,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Container(
-                              padding: EdgeInsets.fromLTRB(15, 5, 15, 10),
-                              margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
-                              decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 240, 210, 159),
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                              width: MediaQuery.of(context).size.width,
-                              height: double.infinity,
-                              // child:
-                              // ListView.builder(
-                              //   shrinkWrap: true,
-                              //   itemCount: snapshot.data!.length,
-                              //   itemBuilder: (context, index) {
-                              //     var trip = snapshot.data![
-                              //         snapshot.data!.length - index - 1];
-                              //     return InkWell(
-                              //         onTap: () {
-                              //           setState(() {
-                              //             Navigator.push(
-                              //                 context,
-                              //                 MaterialPageRoute(
-                              //                     builder: (context) =>
-                              //                         bookingInfomation(
-                              //                             trip)));
-                              //           });
-                              //         },
-                              //         child: Column(
-                              //           children: [
-                              //             SizedBox(
-                              //               height: 10,
-                              //             ),
-                              //             Container(
-                              //                 width: 350,
-                              //                 height: 170,
-                              //                 decoration: BoxDecoration(
-                              //                   borderRadius:
-                              //                       BorderRadius.circular(
-                              //                           12.0),
-                              //                   border: Border.all(
-                              //                       color: trip.status ==
-                              //                               'STAND_BY'
-                              //                           ? Color
-                              //                               .fromARGB(255,
-                              //                                   7, 143, 255)
-                              //                           : trip.status ==
-                              //                                   'WATTING'
-                              //                               ? Color
-                              //                                   .fromARGB(
-                              //                                       255,
-                              //                                       252,
-                              //                                       235,
-                              //                                       5)
-                              //                               : trip.status ==
-                              //                                       'CANCELED'
-                              //                                   ? Color
-                              //                                       .fromARGB(
-                              //                                           255,
-                              //                                           252,
-                              //                                           5,
-                              //                                           5)
-                              //                                   : Color
-                              //                                       .fromARGB(
-                              //                                           255,
-                              //                                           46,
-                              //                                           252,
-                              //                                           5),
-                              //                       width: 5),
-                              //                 ),
-                              //                 child: BookingCard(
-                              //                   trip: trip,
-                              //                 )),
-                              //             SizedBox(
-                              //               height: 20,
-                              //             )
-                              //           ],
-                              //         ));
-                              //   },
-                              // ),
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('${snapshot.error}');
-                          }
+                    Expanded(
+                      child: FutureBuilder<List<FinishedTrip>>(
+                          future: listFinisgTrip,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Container(
+                                padding: EdgeInsets.fromLTRB(15, 5, 15, 10),
+                                margin: EdgeInsets.fromLTRB(15, 15, 15, 15),
+                                decoration: BoxDecoration(
+                                  color: Color.fromARGB(255, 240, 210, 159),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                width: MediaQuery.of(context).size.width,
+                                height: double.infinity,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: snapshot.data!.length,
+                                  itemBuilder: (context, index) {
+                                    var trip = snapshot.data![
+                                        snapshot.data!.length - index - 1];
+                                    return InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        bookingFinishedInfo(
+                                                            trip)));
+                                          });
+                                        },
+                                        child: Column(
+                                          children: [
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Container(
+                                                width: 350,
+                                                height: 170,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0),
+                                                  border: Border.all(
+                                                      color: trip.status ==
+                                                              'STAND_BY'
+                                                          ? Color.fromARGB(
+                                                              255, 7, 143, 255)
+                                                          : trip.status ==
+                                                                  'WAITING'
+                                                              ? Color.fromARGB(
+                                                                  255,
+                                                                  252,
+                                                                  235,
+                                                                  5)
+                                                              : trip.status ==
+                                                                      'CANCELED'
+                                                                  ? Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          252,
+                                                                          5,
+                                                                          5)
+                                                                  : Color
+                                                                      .fromARGB(
+                                                                          255,
+                                                                          46,
+                                                                          252,
+                                                                          5),
+                                                      width: 5),
+                                                ),
+                                                child: BookingFishedCard(
+                                                  trip: trip,
+                                                )),
+                                            SizedBox(
+                                              height: 20,
+                                            )
+                                          ],
+                                        ));
+                                  },
+                                ),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text('${snapshot.error}');
+                            }
 
-                          // By default, show a loading spinner.
-                          return const CircularProgressIndicator();
-                        }),
+                            // By default, show a loading spinner.
+                            return const CircularProgressIndicator();
+                          }),
+                    ),
                     SizedBox(
                       height: 20,
                     ),

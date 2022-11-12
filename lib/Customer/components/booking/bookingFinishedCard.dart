@@ -28,19 +28,17 @@ class BookingCard extends StatelessWidget {
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(255, 0, 0, 0))),
-                Text(trip!.createDate.toString().substring(0, 9),
+                Text(trip!.createDate.toString().substring(0, 10),
                     style: TextStyle(color: Color.fromARGB(255, 236, 144, 5))),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.3,
-                ),
+                Spacer(),
                 Text(
                   trip!.status,
                   style: TextStyle(
-                      fontSize: 17,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: trip!.status == 'STAND_BY'
                           ? Color.fromARGB(255, 7, 143, 255)
-                          : trip!.status == 'WATTING'
+                          : trip!.status == 'WAITING'
                               ? Color.fromARGB(255, 252, 235, 5)
                               : trip!.status == 'CANCELED'
                                   ? Color.fromARGB(255, 252, 5, 5)
@@ -92,7 +90,7 @@ class BookingCard extends StatelessWidget {
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(255, 0, 0, 0))),
-                Text('Slot ' + trip!.slotId.toString())
+                Text(trip!.slot.name)
               ],
             ),
             SizedBox(

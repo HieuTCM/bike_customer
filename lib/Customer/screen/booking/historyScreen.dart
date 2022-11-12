@@ -7,8 +7,9 @@ import 'package:bike_customerv2/Customer/components/TabView/ListSlot.dart';
 import 'package:bike_customerv2/Customer/components/NavBar.dart';
 import 'package:bike_customerv2/Customer/components/TabView/PaymentMethod.dart';
 import 'package:bike_customerv2/Customer/components/TabView/WatitingTab.dart';
-import 'package:bike_customerv2/Customer/components/bookingTab.dart';
-import 'package:bike_customerv2/Customer/components/bookinginfomation.dart';
+import 'package:bike_customerv2/Customer/components/booking/bookingCard.dart';
+import 'package:bike_customerv2/Customer/components/booking/bookingFinishedCard.dart';
+import 'package:bike_customerv2/Customer/components/booking/bookinginfomation.dart';
 import 'package:bike_customerv2/Customer/helper/shared_prefs.dart';
 import 'package:bike_customerv2/Customer/models/slot.dart';
 import 'package:bike_customerv2/Customer/models/trip.dart';
@@ -107,7 +108,7 @@ class _historyScreenState extends State<historyScreen>
                                             color: trip.status == 'STAND_BY'
                                                 ? Color.fromARGB(
                                                     255, 7, 143, 255)
-                                                : trip.status == 'WATTING'
+                                                : trip.status == 'WAITING'
                                                     ? Color.fromARGB(
                                                         255, 252, 235, 5)
                                                     : trip.status == 'CANCELED'

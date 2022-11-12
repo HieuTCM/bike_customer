@@ -46,8 +46,8 @@ class _bookingInfomationState extends State<bookingInfomation> {
 
   insCustomerTrip() async {
     CustomerTrip trip = new CustomerTrip(
-      slotId: widget.trip.slotId.toString(),
-      routeId: widget.trip.routeId.toString(),
+      slotId: widget.trip.slot.id,
+      routeId: widget.trip.route.id,
       customerId: widget.trip.customerId.toString(),
       pickupStationId: widget.trip.pickupStationId.toString(),
       headtoStationId: widget.trip.headtoStationId.toString(),
@@ -238,7 +238,7 @@ class _bookingInfomationState extends State<bookingInfomation> {
                                                   fontWeight: FontWeight.bold,
                                                   color: Color.fromARGB(
                                                       255, 0, 0, 0))),
-                                          Text(widget.trip.slotId.toString(),
+                                          Text(widget.trip.slot.name,
                                               style: TextStyle(
                                                   fontSize: 16,
                                                   color: Color.fromARGB(
@@ -304,7 +304,7 @@ class _bookingInfomationState extends State<bookingInfomation> {
                                                     ? Color.fromARGB(
                                                         255, 7, 143, 255)
                                                     : widget.trip.status ==
-                                                            'WATTING'
+                                                            'WAITING'
                                                         ? Color.fromARGB(
                                                             255, 252, 235, 5)
                                                         : widget.trip.status ==
@@ -335,7 +335,7 @@ class _bookingInfomationState extends State<bookingInfomation> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: widget.trip.status == 'STAND_BY'
                         ? Color.fromARGB(255, 236, 144, 5)
-                        : widget.trip.status == 'WATTING'
+                        : widget.trip.status == 'WAITING'
                             ? Color.fromARGB(255, 107, 107, 107)
                             : Color.fromARGB(255, 31, 69, 238),
                     shape: RoundedRectangleBorder(
@@ -344,13 +344,13 @@ class _bookingInfomationState extends State<bookingInfomation> {
                   ),
                   onPressed: () => (widget.trip.status == 'STAND_BY')
                       ? cancelTrip()
-                      : widget.trip.status == 'WATTING'
+                      : widget.trip.status == 'WAITING'
                           ? {}
                           : insCustomerTrip(),
                   child: Text(
                     (widget.trip.status == 'STAND_BY')
                         ? "Cancel"
-                        : widget.trip.status == 'WATTING'
+                        : widget.trip.status == 'WAITING'
                             ? "Driver is Comming ..."
                             : 'Booking Again',
                     style: TextStyle(

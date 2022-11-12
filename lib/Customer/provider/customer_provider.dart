@@ -5,6 +5,7 @@ import 'package:bike_customerv2/Customer/models/station.dart';
 import 'package:bike_customerv2/Customer/models/tokenAuthenticate.dart';
 import 'package:bike_customerv2/Customer/models/trip.dart';
 import 'package:bike_customerv2/Customer/models/user.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -31,7 +32,9 @@ class customerProvider {
   static const String _cancelCustomerTrip = '/api/v1/customer-trip/cancel/';
   static const String _getAllBookingByCustomerID =
       '/api/v1/customer-trip/find-by-customer?customerId=';
-
+//Trip
+  static const String _getAllTripbyID =
+      '/api/v1/trip/find/customer-trip?customerId=';
 //customer
   static const String _getCustomerByID =
       '/api/v1/customer/'; /*/api/v1/customer/{id} */
@@ -285,8 +288,13 @@ class customerProvider {
   static Future<List<CustomerTripFull>> fetchCustomertripByID(int ID) async {
     Station pickupstation = new Station();
     Station headtostation = new Station();
+    Routes route = new Routes();
+    Slot slot = new Slot();
     CustomerTripFull cus = new CustomerTripFull(
-        pickupStation: pickupstation, headtoStation: headtostation);
+        pickupStation: pickupstation,
+        headtoStation: headtostation,
+        route: route,
+        slot: slot);
     List<CustomerTripFull> listTrip = [];
     try {
       final response = await http.get(
@@ -296,8 +304,33 @@ class customerProvider {
         var jsonData = json.decode(response.body);
         var pickupStation;
         var headtostation;
+        var route;
+        var slot;
 
         for (var i in jsonData) {
+          //fetch Route
+          route = i['route'];
+          if (route is Map) {
+            route = new Routes(
+              id: route['id'],
+              placeFrom: route['placeFrom'],
+              placeTo: route['placeTo'],
+              DefaultCost: route['defaultCost'],
+              Status: route['status'],
+            );
+          }
+          //fetch Slot
+          slot = i['slot'];
+          if (slot is Map) {
+            slot = new Slot(
+              id: slot['id'],
+              name: slot['name'],
+              timeStart: slot['timeStart'],
+              timeEnd: slot['timeEnd'],
+              status: slot['status'],
+            );
+          }
+
           //fetch pick up station
           pickupStation = i['pickupStation'];
           if (pickupStation is Map) {
@@ -326,8 +359,8 @@ class customerProvider {
           cus = new CustomerTripFull(
               id: i['id'],
               customerId: i['customerId'],
-              slotId: i['slotId'],
-              routeId: i['routeId'],
+              slot: slot,
+              route: route,
               pickupStationId: i['pickupStationId'],
               pickupStation: pickupStation,
               headtoStationId: i['headtoStationId'],
@@ -338,6 +371,132 @@ class customerProvider {
               status: i['status']);
 
           listTrip.add(cus);
+        }
+      } else {
+        throw Exception('Error ${response.statusCode}');
+      }
+    } on HttpException catch (message) {
+      print(message.toString());
+    }
+
+    return listTrip;
+  }
+
+  //get Trip  by Customer ID
+  static Future<List<FinishedTrip>> fetchTripByID(int ID) async {
+    Station pickupstation = new Station();
+    Station headtostation = new Station();
+    Routes route = new Routes();
+    Driver driver = new Driver();
+    Slot slot = new Slot();
+    CustomerTripFull cus = new CustomerTripFull(
+        pickupStation: pickupstation,
+        headtoStation: headtostation,
+        route: route,
+        slot: slot);
+    FinishedTrip finishedTrip = new FinishedTrip(cusTrip: cus, driver: driver);
+    List<FinishedTrip> listTrip = [];
+    try {
+      final response = await http.get(
+          Uri.parse('$_mainUrl' + '$_getAllTripbyID' + '$ID'),
+          headers: _header);
+      if (response.statusCode == 200) {
+        var jsonData = json.decode(response.body);
+        var pickupStation;
+        var headtostation;
+        var route;
+        var slot;
+        var driver;
+        var cus;
+
+        for (var i in jsonData) {
+          var cusTripData = i['customerTrip'];
+          driver = i['driver'];
+          //fetch Route
+          route = cusTripData['route'];
+          if (route is Map) {
+            route = new Routes(
+              id: route['id'],
+              placeFrom: route['placeFrom'],
+              placeTo: route['placeTo'],
+              DefaultCost: route['defaultCost'],
+              Status: route['status'],
+            );
+          }
+          //fetch Slot
+          slot = cusTripData['slot'];
+          if (slot is Map) {
+            slot = new Slot(
+              id: slot['id'],
+              name: slot['name'],
+              timeStart: slot['timeStart'],
+              timeEnd: slot['timeEnd'],
+              status: slot['status'],
+            );
+          }
+
+          //fetch pick up station
+          pickupStation = cusTripData['pickupStation'];
+          if (pickupStation is Map) {
+            pickupStation = new Station(
+              id: pickupStation['id'],
+              name: pickupStation['name'],
+              address: pickupStation['address'],
+              img: pickupStation['img'],
+              latitude: pickupStation['latitude'],
+              longtitude: pickupStation['longtitude'],
+            );
+          }
+          //fetch headto station
+          headtostation = cusTripData['headtoStation'];
+          if (headtostation is Map) {
+            headtostation = new Station(
+              id: headtostation['id'],
+              name: headtostation['name'],
+              address: headtostation['address'],
+              img: headtostation['img'],
+              latitude: headtostation['latitude'],
+              longtitude: headtostation['longtitude'],
+            );
+          }
+          //fetch customer's Trip
+          cus = new CustomerTripFull(
+              id: cusTripData['id'],
+              customerId: cusTripData['customerId'],
+              slot: slot,
+              route: route,
+              pickupStationId: cusTripData['pickupStationId'],
+              pickupStation: pickupStation,
+              headtoStationId: cusTripData['headtoStationId'],
+              headtoStation: headtostation,
+              pickupTime: cusTripData['pickupTime'],
+              amount: cusTripData['amount'],
+              createDate: cusTripData['createdDate'],
+              status: cusTripData['status']);
+          //fetch Driver
+          var accDATA = driver['account'];
+          driver = new Driver(
+              Accountid: accDATA['id'],
+              Driverid: driver['id'],
+              name: accDATA['name'],
+              email: accDATA['email'],
+              img: accDATA['img'],
+              gender: accDATA['gender'],
+              password: accDATA['password'],
+              phone: accDATA['phone'],
+              dateCreated: accDATA['dateCreated'],
+              status: accDATA['status'],
+              totalTrip: accDATA['totalTrip']);
+          finishedTrip = new FinishedTrip(
+            id: i['id'],
+            cusTrip: cus,
+            driver: driver,
+            amount: i['amount'],
+            createdDate: i['createdDate'],
+            status: i['status'],
+          );
+
+          listTrip.add(finishedTrip);
         }
       } else {
         throw Exception('Error ${response.statusCode}');
